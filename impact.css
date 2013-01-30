@@ -1,0 +1,35 @@
+.impact-person-box {
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    width: 1em;
+    height: 1em;
+    border: solid 1px #000;
+    margin-right: .3em;
+    line-height: 1;
+}
+.impact-person div {
+    float: left;
+}
+.impact-person {
+    float: left;
+    clear: left;
+    margin-bottom: 1em;
+}
+.impact-person em {
+    color: #666;
+    font-style: normal;
+}
+.impact-people {
+    float: right;
+    width: 350px;
+    white-space: nowrap;
+}
+.impact-selected {
+    background-color: #aaa;
+}
+
+.impact-chart {
+    width: 700px;
+    overflow: auto;
+    clear: left;
+}

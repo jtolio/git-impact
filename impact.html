@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="impact.css"/>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+        <script src="impact-data.js"></script>
+        <script src="impact-code.js"></script>
+        <style>
+            #example-chart {
+                width: 1100px;
+            }
+        </style>
+        <script>
+            $(document).ready(function () {
+                impactChart("#example-chart", chart_data);
+            });
+        </script>
+    </head>
+    <body>
+        <div id="example-chart"></div>
+    </body>
+</html>
