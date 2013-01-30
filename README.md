@@ -16,7 +16,8 @@ Usage
 --------
 
 ```
-~/your/git/repo$ /path/to/impact-data-gen.py > /path/to/impact-data.js
+~/your/git/repo$ /path/to/commit-data.py | /path/to/preprocess.py \
+                 > /path/to/impact-data.js
 ```
 
 Put `impact-data.js` in the same folder as your `impact.html`.

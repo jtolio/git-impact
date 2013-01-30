@@ -21,7 +21,7 @@
 }
 .impact-people {
     float: right;
-    width: 350px;
+    width: 250px;
     white-space: nowrap;
 }
 .impact-selected {
@@ -31,5 +31,13 @@
 .impact-chart {
     width: 700px;
     overflow: auto;
-    clear: left;
+}
+
+.impact-end {
+    float: left;
+    clear: both;
+}
+
+.impact-container {
+    width: 975px;
 }

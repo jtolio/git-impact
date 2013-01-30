@@ -13,7 +13,6 @@ function fillPeopleList($target_elem, people, colors, makeMouseOver) {
         var $person_box = $('<div class="impact-person-box">&nbsp;</div>');
         var $person_name = $('<div class="impact-person-name"/>');
         $person_name.append(person.name);
-        $person_name.append(" <em>(" + person.message + ")</em");
         $person_box.css("backgroundColor", colors[person.author_id]);
         $person_div.append($person_box);
         $person_div.append($person_name);
@@ -37,8 +36,11 @@ function calculateColors(people) {
     return colors;
 }
 
-function scaleContributionSize(size) {
-    return Math.max(Math.round(Math.log(size) * 5), 1)
+function scaleContributionSize(size, max_bucket_size) {
+    return Math.max(
+        Math.round(
+            Math.log(size * (100000000 / max_bucket_size))) * 3,
+        1)
 }
 
 function readableTimestamp(ts) {
@@ -48,7 +50,7 @@ function readableTimestamp(ts) {
 }
 
 function drawImpact($chart_div, colors, buckets, paper, paths, labels,
-                    makeMouseOver) {
+                    makeMouseOver, max_bucket_size) {
     // You might not believe it, but this whole file is a rough port of the
     // *horrible* Raphael impact graph demo code. Whoever wrote that code
     // thought it was real cute to use one letter for variables all over.
@@ -71,7 +73,8 @@ function drawImpact($chart_div, colors, buckets, paper, paths, labels,
                 path = paths[contribution.author_id] = {f: [], b: []}
             }
             path.f.push([x_coord, height, contribution.size]);
-            height += scaleContributionSize(contribution.size);
+            height += scaleContributionSize(contribution.size,
+                                            max_bucket_size);
             path.b.unshift([x_coord, height]);
             height += 2;
         });
@@ -143,6 +146,7 @@ function drawImpact($chart_div, colors, buckets, paper, paths, labels,
 impactChart = function(target_elem, data) {
     var $target_elem = $(target_elem);
     $target_elem.empty();
+    $target_elem.addClass("impact-container");
 
     var $people_div = $('<div class="impact-people"/>');
     var colors = calculateColors(data.authors);
@@ -170,9 +174,12 @@ impactChart = function(target_elem, data) {
     var $chart_div = $('<div class="impact-chart"/>');
     $target_elem.append($chart_div);
 
+    var $end_div = $('<div class="impact-end"/>');
+    $target_elem.append($end_div);
+
     var paper = Raphael($chart_div[0], 0, 0);
 
     drawImpact($chart_div, colors, data.buckets, paper, paths, labels,
-               makeMouseOver);
+               makeMouseOver, data.max_bucket_size);
 }
 })();
