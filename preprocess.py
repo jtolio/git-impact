@@ -5,7 +5,7 @@ Generate impact data from a git repo
 
 Usage:
 
-  ~/your/git/repo$ /path/to/impact-data-gen.py > /path/to/impact-data.js
+  ./commit-data.py ~/your/git/repo/.git | ./preprocess.py > impact-data.js
 """
 
 import sys
