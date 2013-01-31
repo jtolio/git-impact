@@ -29,6 +29,7 @@ function selectPerson($base_elem, author_id) {
 }
 
 function calculateColors(people) {
+    Raphael.getColor.reset();
     var colors = {};
     $.each(people, function(i, person) {
         colors[person.author_id] = Raphael.getColor();
