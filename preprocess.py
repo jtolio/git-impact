@@ -38,8 +38,7 @@ def make_impact_data(contributions, max_buckets=None,
 
     Return value of the form
 
-    {"max_bucket_size": <int>,  # The largest size of any bucket
-     "authors": <list>,
+    {"authors": <list>,
      "buckets": <list>}
 
     "authors" is a list of dictionaries of the form
@@ -65,7 +64,6 @@ def make_impact_data(contributions, max_buckets=None,
     author_ids = {}
     author_id_gen = itertools.count()
     buckets = defaultdict(lambda: [])
-    max_size = 0
 
     # figure out what we need to do to filter out old buckets if max_buckets
     # is not None
@@ -112,7 +110,6 @@ def make_impact_data(contributions, max_buckets=None,
         for _, author_id, size in bucket:
             contributions[author_id] += size
             bucket_size += size
-        max_size = max(max_size, bucket_size)
         contributions_sorted = sorted(
                 ((size, author_id)
                  for author_id, size in contributions.iteritems()),
@@ -141,8 +138,7 @@ def make_impact_data(contributions, max_buckets=None,
             "total": data["total"]})
 
     # return the data
-    return {"max_bucket_size": max_size,
-            "buckets": fixed_buckets,
+    return {"buckets": fixed_buckets,
             "authors": fixed_authors}
 
 

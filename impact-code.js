@@ -36,11 +36,8 @@ function calculateColors(people) {
     return colors;
 }
 
-function scaleContributionSize(size, max_bucket_size) {
-    return Math.max(
-        Math.round(
-            Math.log(size * (100000000 / max_bucket_size))) * 3,
-        1)
+function scaleContributionSize(size) {
+    return Math.max(Math.round(Math.log(size * 5)), 1)
 }
 
 function readableTimestamp(ts) {
@@ -50,7 +47,7 @@ function readableTimestamp(ts) {
 }
 
 function drawImpact($chart_div, colors, buckets, paper, paths, labels,
-                    makeMouseOver, max_bucket_size) {
+                    makeMouseOver, chart_height) {
     // You might not believe it, but this whole file is a rough port of the
     // *horrible* Raphael impact graph demo code. Whoever wrote that code
     // thought it was real cute to use one letter for variables all over.
@@ -64,6 +61,16 @@ function drawImpact($chart_div, colors, buckets, paper, paths, labels,
     // understand all the different constants' interplay yet.
 
     // calculate paths and add bucket dates
+    var max_bucket_size = 0;
+    $.each(buckets, function(bucket_idx, bucket) {
+        var bucket_size = 0;
+        $.each(bucket.contributions, function(_, contribution) {
+            bucket_size += scaleContributionSize(contribution.size);
+        });
+        if (bucket_size > max_bucket_size) {
+            max_bucket_size = bucket_size;
+        }
+    });
     $.each(buckets, function(bucket_idx, bucket) {
         var height = 0;
         var x_coord = bucket_idx * 100;
@@ -73,8 +80,8 @@ function drawImpact($chart_div, colors, buckets, paper, paths, labels,
                 path = paths[contribution.author_id] = {f: [], b: []}
             }
             path.f.push([x_coord, height, contribution.size]);
-            height += scaleContributionSize(contribution.size,
-                                            max_bucket_size);
+            height += scaleContributionSize(contribution.size) * chart_height /
+                      max_bucket_size;
             path.b.unshift([x_coord, height]);
             height += 2;
         });
@@ -180,6 +187,6 @@ impactChart = function(target_elem, data) {
     var paper = Raphael($chart_div[0], 0, 0);
 
     drawImpact($chart_div, colors, data.buckets, paper, paths, labels,
-               makeMouseOver, data.max_bucket_size);
+               makeMouseOver, $target_elem.height());
 }
 })();
