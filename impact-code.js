@@ -37,7 +37,7 @@ function calculateColors(people) {
 }
 
 function scaleContributionSize(size) {
-    return Math.max(Math.round(Math.log(size * 5)), 1)
+    return Math.max(Math.round(Math.log(size * 5)), 0)
 }
 
 function readableTimestamp(ts) {
@@ -80,10 +80,13 @@ function drawImpact($chart_div, colors, buckets, paper, paths, labels,
                 path = paths[contribution.author_id] = {f: [], b: []}
             }
             path.f.push([x_coord, height, contribution.size]);
-            height += scaleContributionSize(contribution.size) * chart_height /
+            size = scaleContributionSize(contribution.size) * chart_height /
                       max_bucket_size;
+            height += size;
             path.b.unshift([x_coord, height]);
-            height += 2;
+            if (size > 0) {
+                height += 2;
+            }
         });
         paper.text(x_coord + 25, height + 10, readableTimestamp(bucket.date))
                 .attr(DATE_ATTR);
