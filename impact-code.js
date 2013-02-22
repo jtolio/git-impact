@@ -153,8 +153,8 @@ function drawImpact($chart_div, colors, buckets, paper, paths, labels,
     });
     paper.setSize(max_x, max_y);
 
-    // scroll the chart to the far left if that makes sense to do.
-    $chart_div.animate({scrollLeft: $chart_div.children("svg").width()}, 1);
+    // scroll the chart as far as it can to the left.
+    $chart_div[0].scrollLeft = 9e9;
 }
 
 impactChart = function(target_elem, data, scaling) {
