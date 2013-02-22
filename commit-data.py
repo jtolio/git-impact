@@ -70,7 +70,7 @@ def get_commits(git_path):
         deletion_count = 0
         file_count = 0
         while peek_line().strip() and peek_line().strip() != "NEW COMMIT":
-            insertions, deletions, path = pop_line().strip().split()
+            insertions, deletions, path = pop_line().strip().split(None, 2)
             if insertions == "-": insertions = 0
             if deletions == "-": deletions = 0
             insertion_count += int(insertions)
