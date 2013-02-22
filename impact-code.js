@@ -153,7 +153,7 @@ function drawImpact($chart_div, colors, buckets, paper, paths, labels,
     });
     paper.setSize(max_x, max_y);
 
-    // scroll the chart as far as it can to the left.
+    // scroll the chart as far as it can to the right.
     $chart_div[0].scrollLeft = 9e9;
 }
 
