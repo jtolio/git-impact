@@ -8,6 +8,7 @@ Usage:
   ./commit-data.py ~/your/git/repo/.git | ./preprocess.py > impact-data.js
 """
 
+import sys
 import json
 import itertools
 import subprocess
@@ -90,7 +91,7 @@ def main():
     if len(sys.argv) > 1:
         git_path = sys.argv[1]
     else:
-        git_path = "."
+        git_path = ".git"
     for date, author, insertions, deletions, _ in get_commits(git_path):
         print date, insertions + deletions, author
 
