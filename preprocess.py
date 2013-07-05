@@ -10,11 +10,25 @@ Usage:
 
 import sys
 import json
+import time
 import itertools
 import subprocess
 from collections import defaultdict
 
-DEFAULT_BUCKET_WIDTH = 60 * 60 * 24 * 7
+
+def oldestAllowedContribution(max_buckets):
+    return makeBucketId(time.time()) - (max_buckets * 60 * 60 * 24 * 7)
+
+
+def makeBucketId(timestamp):
+    tm = time.gmtime(timestamp)
+    week_day = (tm.tm_wday + 1) % 7
+    timestamp -= week_day * 24 * 60 * 60
+    timestamp = int(timestamp)
+    timestamp -= tm.tm_hour * 60 * 60
+    timestamp -= tm.tm_min * 60
+    timestamp -= tm.tm_sec
+    return timestamp + 7 * 60 * 60 + 1
 
 
 def sanitize(instream):
@@ -31,8 +45,7 @@ def sanitize(instream):
         yield int(parts[0]), int(parts[1]), " ".join(parts[2:])
 
 
-def make_impact_data(contributions, max_buckets=None,
-                     bucket_width=DEFAULT_BUCKET_WIDTH):
+def make_impact_data(contributions, max_buckets=None):
     """From an iterable of contribution tuples (date, size, author), returns a
     dictionary of useful aggregate data for use in an impact graph.
 
@@ -69,9 +82,7 @@ def make_impact_data(contributions, max_buckets=None,
     # is not None
     contributions = sorted(contributions)
     if contributions and max_buckets is not None:
-        latest = contributions[-1][0]
-        latest_bucket = int(latest / bucket_width)
-        oldest_allowed = (latest_bucket - max_buckets + 1) * bucket_width
+        oldest_allowed = oldestAllowedContribution(max_buckets)
     else:
         oldest_allowed = float('-inf')
 
@@ -85,7 +96,7 @@ def make_impact_data(contributions, max_buckets=None,
                     "name": author}
         else:
             author_id = author_ids[author]
-        bucket_id = int(date / bucket_width)
+        bucket_id = makeBucketId(date)
         if author_id not in author_starts:
             author_starts[author_id] = bucket_id
         author_ends[author_id] = bucket_id
@@ -104,7 +115,7 @@ def make_impact_data(contributions, max_buckets=None,
     for bucket_id in sorted(buckets.keys()):
         bucket = buckets[bucket_id]
         bucket.sort()
-        bucket_date = bucket[0][0]
+        bucket_date = bucket_id
         contributions = defaultdict(lambda: 0)
         bucket_size = 0
         for _, author_id, size in bucket:
@@ -120,7 +131,7 @@ def make_impact_data(contributions, max_buckets=None,
                     author_ends[author_id]):
                 contributions_sorted.append((0, author_id))
         fixed_buckets.append({
-                "date": bucket[0][0],
+                "date": bucket_date,
                 "contributions":
                     [{"author_id": author_id, "size": size}
                      for size, author_id in contributions_sorted]})
@@ -144,21 +155,17 @@ def make_impact_data(contributions, max_buckets=None,
 
 def main():
     max_buckets = None
-    bucket_width = DEFAULT_BUCKET_WIDTH
     js_var_name = "chart_data"
 
     if len(sys.argv) > 1:
         js_var_name = sys.argv[1]
     if len(sys.argv) > 2:
         max_buckets = int(sys.argv[2])
-    if len(sys.argv) > 3:
-        bucket_width = int(sys.argv[3])
 
     print "var %s = " % js_var_name, json.dumps(
         make_impact_data(
             sanitize(sys.stdin),
-            max_buckets=max_buckets,
-            bucket_width=bucket_width),
+            max_buckets=max_buckets),
         indent=2), ";"
 
 
