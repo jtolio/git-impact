@@ -7,7 +7,7 @@ Usage:
 
   ./commit-data.py ~/your/git/repo/.git | ./preprocess.py > impact-data.js
 """
-
+import sys
 import json
 import itertools
 import subprocess
