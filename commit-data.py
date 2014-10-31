@@ -10,6 +10,7 @@ Usage:
 import sys
 import json
 import itertools
+import os
 import subprocess
 from collections import defaultdict
 
@@ -32,9 +33,10 @@ def get_commits(git_path):
     """
 
     proc = subprocess.Popen(
-            ["git", "--git-dir=%s" % git_path, "log", "--full-history",
+            ["git", "log", "--full-history",
              "--format=NEW COMMIT%n%ct%n%aN%n%aE", "--numstat"],
-            stdout=subprocess.PIPE)
+            stdout=subprocess.PIPE,
+            cwd=os.path.abspath(git_path))
     line_stack = []
 
     def peek_line():
